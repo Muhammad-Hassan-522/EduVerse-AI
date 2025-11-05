@@ -1,11 +1,19 @@
-<app-sidebar
-  role="teacher"
-  (toggleSidebar)="isSidebarOpen = $event"
-></app-sidebar>
+<div class="flex">
+  <app-sidebar
+    role="teacher"
+    (toggleSidebar)="onSidebarToggle($event)"
+  ></app-sidebar>
 
-<div
-  [ngClass]="{ 'ml-64': isSidebarOpen, 'ml-20': !isSidebarOpen }"
-  class="transition-all duration-300"
->
-  <router-outlet></router-outlet>
+  <div
+    class="transition-all duration-300 min-h-screen bg-gray-50 w-full"
+    [ngClass]="{
+      'ml-64': !isMobile && isSidebarOpen,
+      'ml-20': !isMobile && !isSidebarOpen,
+      'ml-0': isMobile
+    }"
+  >
+    <div class="p-4">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
 </div>

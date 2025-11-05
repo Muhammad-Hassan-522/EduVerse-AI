@@ -5,9 +5,10 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnChanges,
   Output,
+  OnChanges,
   SimpleChanges,
+  HostListener,
 } from '@angular/core';
 
 interface MenuItem {
@@ -25,19 +26,32 @@ interface MenuItem {
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnChanges {
-
   @Input() role: 'admin' | 'teacher' | 'super-admin' | 'student' = 'admin';
-
   @Output() toggleSidebar = new EventEmitter<boolean>();
 
-  constructor(private router: Router) {}
-  isOpen: boolean = true;
+  isOpen = true;
+  isMobileSidebarVisible = false;
+  isMobile = false;
   menuItems: MenuItem[] = [];
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['role']) {
-      this.setMenuItems();
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.updateScreenSize();
+  }
+
+  @HostListener('window:resize')
+  updateScreenSize() {
+    this.isMobile = window.innerWidth < 992;
+    if (this.isMobile) {
+      this.isMobileSidebarVisible = false; // hidden by default
+    } else {
+      this.isMobileSidebarVisible = true; // always visible on desktop
     }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['role']) this.setMenuItems();
   }
 
   private setMenuItems() {
@@ -78,15 +92,19 @@ export class SidebarComponent implements OnChanges {
           path: 'dashboard',
         },
         { icon: 'fa-solid fa-book', label: 'My Courses', path: 'courses' },
-        { icon: 'fa-solid fa-book', label: 'Explore Courses', path: 'explore-courses' },
+        {
+          icon: 'fa-solid fa-book',
+          label: 'Explore Courses',
+          path: 'explore-courses',
+        },
         { icon: 'fa-solid fa-question', label: 'Quizzes', path: 'quizzes' },
         { icon: 'fa-solid fa-file', label: 'Assignments', path: 'assignments' },
-        { icon: 'fa-solid fa-robot', label: 'Ai Assistant', path: 'ai-assisstant' },
         {
-          icon: 'fa-solid fa-user',
-          label: 'Leaderboard',
-          path: 'leaderboard',
+          icon: 'fa-solid fa-robot',
+          label: 'Ai Assistant',
+          path: 'ai-assisstant',
         },
+        { icon: 'fa-solid fa-user', label: 'Leaderboard', path: 'leaderboard' },
         { icon: 'fa-solid fa-cog', label: 'Settings', path: 'settings' },
       ];
     } else if (this.role === 'super-admin') {
@@ -104,15 +122,30 @@ export class SidebarComponent implements OnChanges {
     }
   }
 
-  toggle() {
-    this.isOpen = !this.isOpen;
-    this.toggleSidebar.emit(this.isOpen);
+  /** Universal toggle for both desktop and mobile */
+  toggleSidebarAction() {
+    if (this.isMobile) {
+      this.isMobileSidebarVisible = !this.isMobileSidebarVisible;
+    } else {
+      this.isOpen = !this.isOpen;
+      this.toggleSidebar.emit(this.isOpen);
+    }
+  }
+
+  closeMobileSidebar() {
+    if (this.isMobile) {
+      this.isMobileSidebarVisible = false;
+    }
   }
 
   logout() {
     localStorage.removeItem('token');
     sessionStorage.clear();
-
     this.router.navigate(['/login']);
+  }
+
+  toggleDesktopSidebar() {
+    this.isOpen = !this.isOpen;
+    this.toggleSidebar.emit(this.isOpen);
   }
 }

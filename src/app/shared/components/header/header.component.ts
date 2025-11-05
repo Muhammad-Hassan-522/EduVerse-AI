@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-header',
@@ -8,6 +14,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+toggleSidebarAction() {
+throw new Error('Method not implemented.');
+}
   @Input() pageTitle: string = 'Admin Dashboard';
   @Input() notificationCount: number = 0;
   @Input() profile: Profile = {
@@ -18,6 +27,10 @@ export class HeaderComponent {
   @Output() notificationClick = new EventEmitter<void>();
   @Output() profileClick = new EventEmitter<void>();
   @Output() logoutClick = new EventEmitter<void>();
+
+  constructor() {
+    this.updateScreenSize();
+  }
 
   onNotificationClick(): void {
     this.notificationClick.emit();
@@ -30,6 +43,14 @@ export class HeaderComponent {
   onLogoutClick(): void {
     this.logoutClick.emit();
   }
+
+  isMobile = false;
+
+  @HostListener('window:resize')
+  updateScreenSize() {
+    this.isMobile = window.innerWidth < 992;
+  }
+
 }
 
 interface Profile {

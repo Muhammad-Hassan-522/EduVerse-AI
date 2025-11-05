@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { RouterOutlet } from '@angular/router';
 @Component({
@@ -10,4 +10,18 @@ import { RouterOutlet } from '@angular/router';
 })
 export class SuperAdminLayoutComponent {
   isSidebarOpen = true;
+  isMobile = false;
+
+  constructor() {
+    this.updateScreenSize();
+  }
+
+  @HostListener('window:resize')
+  updateScreenSize() {
+    this.isMobile = window.innerWidth < 992;
+  }
+
+  onSidebarToggle(isOpen: boolean) {
+    this.isSidebarOpen = isOpen;
+  }
 }
