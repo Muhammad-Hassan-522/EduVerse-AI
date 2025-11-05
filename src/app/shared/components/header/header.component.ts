@@ -14,9 +14,9 @@ import { CommonModule } from '@angular/common';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-toggleSidebarAction() {
-throw new Error('Method not implemented.');
-}
+  toggleSidebarAction() {
+    throw new Error('Method not implemented.');
+  }
   @Input() pageTitle: string = 'Admin Dashboard';
   @Input() notificationCount: number = 0;
   @Input() profile: Profile = {
@@ -31,7 +31,7 @@ throw new Error('Method not implemented.');
   constructor() {
     this.updateScreenSize();
   }
-
+  isMobile = false;
   onNotificationClick(): void {
     this.notificationClick.emit();
   }
@@ -44,13 +44,10 @@ throw new Error('Method not implemented.');
     this.logoutClick.emit();
   }
 
-  isMobile = false;
-
   @HostListener('window:resize')
   updateScreenSize() {
     this.isMobile = window.innerWidth < 992;
   }
-
 }
 
 interface Profile {
